@@ -1,0 +1,28 @@
+<h1> Welcome Home!</h1>
+<p>We have missed you. {{ name }}</p>
+
+{% for message in get_flashed_messages() %}
+<h2 style="color: red;"> {{ message }} </h2>
+{% endfor %}
+
+<form action="your-url" method="post">
+    <label for="url">Website URL</label>
+    <input type="url" name="url" value=""/>
+    <br/>
+    <label for="code">Short Name</label>
+    <input type="text" name="code" value="" />
+    <br/>
+    <input type="submit" value="Shorten"/>
+</form>
+
+<form action="your-url" method="post" enctype="multipart/form-data">
+    <label for="file">File</label>
+    <input type="file" name="file" value=""/>
+    <br/>
+    <label for="code">Short Name</label>
+    <input type="text" name="code" value="" />
+    <br/>
+    <input type="submit" value="Shorten"/>
+</form>
+<img src="{{ url_for('static', filename= '/user_files/houseBackground-end.png')}}" height="500px" width="500px"/>
+<img src="{{ url_for('static', filename= 'css/images/AOE4_Medallion.jpg')}}" height="500px" width="500px"/>
