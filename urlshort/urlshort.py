@@ -1,11 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, abort, jsonify
+from datetime import datetime
+from flask import render_template, request, redirect, url_for, flash, abort, session, jsonify,Blueprint
 import json
 import os.path
 from werkzeug.utils import secure_filename
-#name of the module currently running in flask
-app = Flask(__name__)
-app.secret_key = 'h34ifeji359229040plf'
+from datetime import datetime
 
+bp = Blueprint('urlshort',__name__)
 
 def load_urls():
     #read in the urls if they exist already
@@ -13,12 +13,12 @@ def load_urls():
         with open('urls.json') as urls_file:
             return json.load(urls_file)
     return None
-
-@app.route('/')
+#home page route
+@bp.route('/')
 def home():
-    return render_template("home.html",name='Thomas')
+    return render_template("home.html",codes=session.keys())
 
-@app.route('/your-url',methods=['GET','POST'])
+@bp.route('/your-url',methods=['GET','POST'])
 def your_url():
     if request.method == 'POST':
         urls = {}
@@ -31,24 +31,25 @@ def your_url():
         #check to see if the code already exists in the urls dict
         if request.form['code'] in urls.keys():
             flash('That short name has already been taken. Please select another!')
-            return redirect(url_for('home'))
+            return redirect(url_for('urlshort.home')) 
 
         if 'url' in request.form.keys():
             urls[request.form['code']] = {'url':request.form['url']}
         else:
             f = request.files['file']
             full_name = request.form['code'] + secure_filename(f.filename)
-            f.save("C:\\Users\\tkk10\\Documents\\Development\\Flask\\Flask_URL_Shortener\\static\\user_files\\" + full_name)
+            f.save(".\\Flask_URL_Shortener\\urlshort\\static\\user_files\\" + full_name)
             urls[request.form['code']] = {'file': full_name}
-        
         with open('urls.json','w') as url_file:
             json.dump(urls,url_file)
+            now = datetime.now()
+            session[request.form['code']] = now.strftime("%d/%m/%Y %H:%M:%S")
 
-        return render_template("your_url.html",code=request.form['code'])
+        return render_template("your_url.html",url_code=(request.form['code'],request.form['url']))
     else:
-        return redirect(url_for('home'))
+        return redirect(url_for('urlshort.home'))
 
-@app.route('/<string:code>')
+@bp.route('/<string:code>')
 def redirect_to_url(code):
     urls = {}
     urls = load_urls()
@@ -61,10 +62,11 @@ def redirect_to_url(code):
     
     return abort(404)
 
-@app.errorhandler(404)
+@bp.errorhandler(404)
 def page_not_found(error):
     return render_template('page_not_found.html'),404
 
-@app.route('/api')
+
+@bp.route('/api')
 def session_api():
     return jsonify(list(session.keys()))

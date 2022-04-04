@@ -127,3 +127,8 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+./static/user_files/
+Ex_Files_Flask_EssT.zip
+Ex_Files_Flask_EssT/
