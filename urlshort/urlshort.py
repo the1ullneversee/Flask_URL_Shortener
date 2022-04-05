@@ -1,7 +1,7 @@
 from datetime import datetime
 from flask import render_template, request, redirect, url_for, flash, abort, session, jsonify,Blueprint
 import json
-import os.path
+import os
 from werkzeug.utils import secure_filename
 from datetime import datetime
 
@@ -38,14 +38,14 @@ def your_url():
         else:
             f = request.files['file']
             full_name = request.form['code'] + secure_filename(f.filename)
-            f.save(".\\Flask_URL_Shortener\\urlshort\\static\\user_files\\" + full_name)
+            f.save(os.getcwd() + "\\urlshort\\static\\user_files\\" + full_name)
             urls[request.form['code']] = {'file': full_name}
         with open('urls.json','w') as url_file:
             json.dump(urls,url_file)
             now = datetime.now()
             session[request.form['code']] = now.strftime("%d/%m/%Y %H:%M:%S")
-
-        return render_template("your_url.html",url_code=(request.form['code'],request.form['url']))
+        link = urls[request.form['code']] if "url" in urls[request.form['code']] else urls.get(request.form['code'])['file']
+        return render_template("your_url.html",url_code=(request.form['code'],link))
     else:
         return redirect(url_for('urlshort.home'))
 
