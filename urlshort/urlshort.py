@@ -40,12 +40,12 @@ def your_url():
             full_name = request.form['code'] + secure_filename(f.filename)
             full_path = os.getcwd()
             if "Flask_URL_Shortener" not in full_path:
-                full_path += "\\Flask_URL_Shortener\\urlshort\\static\\user_files\\"
+                full_path += "/Flask_URL_Shortener/urlshort/static/user_files/"
             else:
-                full_path += "\\urlshort\\static\\user_files\\"
+                full_path += "/urlshort/static/user_files//"
 
             f.save(full_path + full_name)
-            urls[request.form['code']] = {'file': full_name}
+            urls[request.form['code']] = {'file': full_name, "path": full_path}
         with open('urls.json','w') as url_file:
             json.dump(urls,url_file)
             now = datetime.now()
