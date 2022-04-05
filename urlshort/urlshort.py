@@ -45,7 +45,7 @@ def your_url():
                 full_path += "/urlshort/static/user_files//"
 
             f.save(full_path + full_name)
-            urls[request.form['code']] = {'file': full_name, "path": full_path}
+            urls[request.form['code']] = {'file': full_name, "path": full_path, "working": os.getcwd()}
         with open('urls.json','w') as url_file:
             json.dump(urls,url_file)
             now = datetime.now()
